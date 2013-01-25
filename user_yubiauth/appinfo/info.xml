@@ -6,7 +6,7 @@
 	<licence>AGPL</licence>
 	<author>Jarkko Lehtoranta</author>
 	<require>4.9</require>
-	<shipped>true</shipped>
+	<shipped>false</shipped>
 	<types>
 		<authentication/>
 	</types>

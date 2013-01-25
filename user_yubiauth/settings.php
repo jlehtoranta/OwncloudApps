@@ -74,6 +74,7 @@ if ($_POST) {
 	// Check for a valid Yubikey ID length
 	if (strlen($id) !== 12) {
 		OCP\Config::setUserValue($user, 'user_yubiauth', 'yubiauth_enabled', 'false');
+		OCP\Config::setUserValue($user, 'user_yubiauth', 'yubiauth_id', '');
 		if ($id !== "") {
 			OCP\Config::setUserValue($user, 'user_yubiauth', 'yubiauth_id', 'FAIL: Check OTP');
 		}

@@ -31,7 +31,7 @@ Adds Yubico Yubikey authentication support to Owncloud
 * Status:
     * ``"Alpha"`` -- Works well for me, but not really tested in other installations
 
-* Changelog
+* Changelog:
     * ``v0.0.2``
         * first version
         * tested with OC 4.5.x

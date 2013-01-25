@@ -37,5 +37,4 @@ define('OC_USER_BACKEND_YUBIAUTH_DEFAULT_SYNC_LEVEL', "secure");
 
 
 // Activate the Yubiauth backend
-OC_User::registerBackend('YUBIAUTH');
 OC_User::useBackend('YUBIAUTH');

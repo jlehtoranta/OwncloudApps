@@ -43,7 +43,7 @@ class OC_USER_YUBIAUTH extends OC_User_Backend {
 		}
 		$hasher = new PasswordHash(8, CRYPT_BLOWFISH!=1);
 		$db_hash = OCP\Config::getUserValue($user, 'user_yubiauth', 'yubiauth_pw', '');
-		if ($hasher->CheckPassword($pw.OC_Config::getValue('passwordsalt', ''), $db_hash)) {
+		if ($hasher->CheckPassword($pw.OCP\Config::getSystemValue('passwordsalt', ''), $db_hash)) {
 			return true;
 		}
 		return false;

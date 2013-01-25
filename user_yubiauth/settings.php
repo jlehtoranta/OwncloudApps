@@ -82,7 +82,7 @@ if ($_POST) {
 	// Enable/Save password
 	if ($pw_enabled === "true" && $pw !== "") {
 		$hasher = new PasswordHash(8, CRYPT_BLOWFISH!=1);
-		$hash = $hasher->HashPassword($pw.OC_Config::getValue('passwordsalt', ''));
+		$hash = $hasher->HashPassword($pw.OCP\Config::getSystemValue('passwordsalt', ''));
 		OCP\Config::setUserValue($user, 'user_yubiauth', 'yubiauth_pw', $hash);
 		OCP\Config::setUserValue($user, 'user_yubiauth', 'yubiauth_pw_enabled', 'true');
 	}

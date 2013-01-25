@@ -4,7 +4,7 @@
 * ownCloud - user_yubiauth
 *
 * @author Jarkko Lehtoranta
-* @copyright 2013 Jarkko Lehtoranta <devel@jlranta.com>
+* @copyright 2013 Jarkko Lehtoranta devel@jlranta.com
 *
 * This library is free software; you can redistribute it and/or
 * modify it under the terms of the GNU AFFERO GENERAL PUBLIC LICENSE

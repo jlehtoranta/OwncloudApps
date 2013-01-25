@@ -25,14 +25,14 @@ require_once 'phpass/PasswordHash.php';
 require_once 'php-yubico/Yubico.php';
 
 $params = array('yubiauth_enabled',
-				'yubiauth_id',
-				'yubiauth_pw_enabled',
-				'yubiauth_pw',
-				'yubiauth_urls',
-				'yubiauth_https',
-				'yubiauth_check_crt',
-				'yubiauth_client_id',
-				'yubiauth_client_hmac'
+			'yubiauth_id',
+			'yubiauth_pw_enabled',
+			'yubiauth_pw',
+			'yubiauth_urls',
+			'yubiauth_https',
+			'yubiauth_check_crt',
+			'yubiauth_client_id',
+			'yubiauth_client_hmac'
 );
 
 $user = OCP\USER::getUser();
@@ -119,6 +119,7 @@ if ($_POST) {
 		}
 
 		$yauth = new Auth_Yubico($cid, $hmac, $https, $check_crt);
+		
 		if ($urls !== "") {
 			$url = explode(",", $urls);
 			foreach ($urls as $u) {

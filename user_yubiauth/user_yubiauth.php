@@ -51,11 +51,21 @@ class OC_USER_YUBIAUTH extends OC_User_Backend {
 
 	// Verifies the Yubikey OTP
 	private static function verifyYubikeyOTP($user, $otp) {
-		$urls = OCP\Config::getUserValue($user, 'user_yubiauth', 'yubiauth_urls', '');
-		$check_crt = OCP\Config::getUserValue($user, 'user_yubiauth', 'yubiauth_check_crt', '');
-		$https = OCP\Config::getUserValue($user, 'user_yubiauth', 'yubiauth_https', '');
-		$cid = OCP\Config::getUserValue($user, 'user_yubiauth', 'yubiauth_client_id', '');
-		$hmac = OCP\Config::getUserValue($user, 'user_yubiauth', 'yubiauth_client_hmac', '');
+		// Global or personal validation server settings?
+		if (OCP\Config::getAppValue('user_yubiauth', 'yubiauth_admin_enabled', 'false') === "true") {
+			$urls = OCP\Config::getAppValue('user_yubiauth', 'yubiauth_urls', '');
+			$check_crt = OCP\Config::getAppValue('user_yubiauth', 'yubiauth_check_crt', '');
+			$https = OCP\Config::getAppValue('user_yubiauth', 'yubiauth_https', '');
+			$cid = OCP\Config::getAppValue('user_yubiauth', 'yubiauth_client_id', '');
+			$hmac = OCP\Config::getAppValue('user_yubiauth', 'yubiauth_client_hmac', '');
+		}
+		else {
+			$urls = OCP\Config::getUserValue($user, 'user_yubiauth', 'yubiauth_urls', '');
+			$check_crt = OCP\Config::getUserValue($user, 'user_yubiauth', 'yubiauth_check_crt', '');
+			$https = OCP\Config::getUserValue($user, 'user_yubiauth', 'yubiauth_https', '');
+			$cid = OCP\Config::getUserValue($user, 'user_yubiauth', 'yubiauth_client_id', '');
+			$hmac = OCP\Config::getUserValue($user, 'user_yubiauth', 'yubiauth_client_hmac', '');
+		}
 
 		if ($check_crt === "true") {
 			$check_crt = 1;
@@ -79,8 +89,8 @@ class OC_USER_YUBIAUTH extends OC_User_Backend {
 		$yauth = new Auth_Yubico($cid, $hmac, $https, $check_crt);
 
 		if ($urls !== "") {
-			$url = explode(",", $urls);
-			foreach ($urls as $u) {
+			$url_array = explode(",", $urls);
+			foreach ($url_array as $u) {
 				$yauth->addURLpart($u);
 			}
 		}

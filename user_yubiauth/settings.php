@@ -93,11 +93,21 @@ if ($_POST) {
 	}
 	// Enable Yubiauth and change the Yubikey ID after OTP test
 	if (strlen($id) === 12 && $id !== OCP\Config::getUserValue($user, 'user_yubiauth', 'yubiauth_id')) {
-		$urls = OCP\Config::getUserValue($user, 'user_yubiauth', 'yubiauth_urls', '');
-		$check_crt = OCP\Config::getUserValue($user, 'user_yubiauth', 'yubiauth_check_crt', '');
-		$https = OCP\Config::getUserValue($user, 'user_yubiauth', 'yubiauth_https', '');
-		$cid = OCP\Config::getUserValue($user, 'user_yubiauth', 'yubiauth_client_id', '');
-		$hmac = OCP\Config::getUserValue($user, 'user_yubiauth', 'yubiauth_client_hmac', '');
+		// Global or personal validation server settings?
+		if (OCP\Config::getAppValue('user_yubiauth', 'yubiauth_admin_enabled', 'false') === "true") {
+			$urls = OCP\Config::getAppValue('user_yubiauth', 'yubiauth_urls', '');
+			$check_crt = OCP\Config::getAppValue('user_yubiauth', 'yubiauth_check_crt', '');
+			$https = OCP\Config::getAppValue('user_yubiauth', 'yubiauth_https', '');
+			$cid = OCP\Config::getAppValue('user_yubiauth', 'yubiauth_client_id', '');
+			$hmac = OCP\Config::getAppValue('user_yubiauth', 'yubiauth_client_hmac', '');
+		}
+		else {
+			$urls = OCP\Config::getUserValue($user, 'user_yubiauth', 'yubiauth_urls', '');
+			$check_crt = OCP\Config::getUserValue($user, 'user_yubiauth', 'yubiauth_check_crt', '');
+			$https = OCP\Config::getUserValue($user, 'user_yubiauth', 'yubiauth_https', '');
+			$cid = OCP\Config::getUserValue($user, 'user_yubiauth', 'yubiauth_client_id', '');
+			$hmac = OCP\Config::getUserValue($user, 'user_yubiauth', 'yubiauth_client_hmac', '');
+		}
 
 		if ($check_crt === "true") {
 			$check_crt = 1;
@@ -121,8 +131,8 @@ if ($_POST) {
 		$yauth = new Auth_Yubico($cid, $hmac, $https, $check_crt);
 		
 		if ($urls !== "") {
-			$url = explode(",", $urls);
-			foreach ($urls as $u) {
+			$url_array = explode(",", $urls);
+			foreach ($url_array as $u) {
 				$yauth->addURLpart($u);
 			}
 		}
@@ -143,7 +153,8 @@ if ($_POST) {
 
 // Fill settings template
 $tmpl = new OCP\Template('user_yubiauth', 'settings');
-$tmpl->assign('yubiauth_enabled', OCP\Config::getUserValue($user, 'user_yubiauth', 'yubiauth_enabled', ''));
+$tmpl->assign('yubiauth_admin_enabled', OCP\Config::getAppValue('user_yubiauth', 'yubiauth_admin_enabled', 'false'));
+$tmpl->assign('yubiauth_enabled', OCP\Config::getUserValue($user, 'user_yubiauth', 'yubiauth_enabled', 'false'));
 $tmpl->assign('yubiauth_id', OCP\Config::getUserValue($user, 'user_yubiauth', 'yubiauth_id', ''));
 $tmpl->assign('yubiauth_pw_enabled', OCP\Config::getUserValue($user, 'user_yubiauth', 'yubiauth_pw_enabled', ''));
 if (OCP\Config::getUserValue($user, 'user_yubiauth', 'yubiauth_pw', '') === "") {

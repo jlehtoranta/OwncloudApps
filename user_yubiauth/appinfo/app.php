@@ -28,6 +28,7 @@ if (!in_array ('curl', get_loaded_extensions())) {
 
 require_once 'user_yubiauth/user_yubiauth.php';
 
+OCP\App::registerAdmin('user_yubiauth', 'settings_admin');
 OCP\App::registerPersonal('user_yubiauth','settings');
 
 // Set the defaults

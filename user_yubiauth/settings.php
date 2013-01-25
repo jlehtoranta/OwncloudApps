@@ -75,7 +75,7 @@ if ($_POST) {
 	if (strlen($id) !== 12) {
 		OCP\Config::setUserValue($user, 'user_yubiauth', 'yubiauth_enabled', 'false');
 		OCP\Config::setUserValue($user, 'user_yubiauth', 'yubiauth_id', '');
-		if ($id !== "") {
+		if (strlen($id) > 0) {
 			OCP\Config::setUserValue($user, 'user_yubiauth', 'yubiauth_id', 'FAIL: Check OTP');
 		}
 	}

@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<info>
+	<id>user_yubiauth</id>
+	<name>Yubiauth user backend</name>
+	<description>This backend adds Yubico Yubikey authentication support to Owncloud.</description>
+	<licence>AGPL</licence>
+	<author>Jarkko Lehtoranta</author>
+	<require>4.9</require>
+	<shipped>true</shipped>
+	<types>
+		<authentication/>
+	</types>
+</info>

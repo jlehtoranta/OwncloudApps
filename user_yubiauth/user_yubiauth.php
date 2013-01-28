@@ -21,89 +21,10 @@
 *
 */
 
-require_once 'phpass/PasswordHash.php';
-require_once 'php-yubico/Yubico.php';
+require_once 'auth.php';
 
 // Yubiauth user backend class
 class OC_USER_YUBIAUTH extends OC_User_Backend {
-	// Checks if the Yubikey id is assigned to the user id
-	private static function findYubiauthUser($user, $otp) {
-		$id = substr($otp, 0, 12);
-		$db_id = OCP\Config::getUserValue($user, 'user_yubiauth', 'yubiauth_id', '');
-		if ($id === $db_id) {
-			return true;
-		}
-		return false;
-	}
-
-	// Checks for a valid password
-	private static function checkYubiauthPassword($user, $pw) {
-		if (OCP\Config::getUserValue($user, 'user_yubiauth', 'yubiauth_pw_enabled', 'false') !== "true") {
-			return true;
-		}
-		$hasher = new PasswordHash(8, CRYPT_BLOWFISH!=1);
-		$db_hash = OCP\Config::getUserValue($user, 'user_yubiauth', 'yubiauth_pw', '');
-		if ($hasher->CheckPassword($pw.OCP\Config::getSystemValue('passwordsalt', ''), $db_hash)) {
-			return true;
-		}
-		return false;
-	}
-
-	// Verifies the Yubikey OTP
-	private static function verifyYubikeyOTP($user, $otp) {
-		// Global or personal validation server settings?
-		if (OCP\Config::getAppValue('user_yubiauth', 'yubiauth_admin_enabled', 'false') === "true") {
-			$urls = OCP\Config::getAppValue('user_yubiauth', 'yubiauth_urls', '');
-			$check_crt = OCP\Config::getAppValue('user_yubiauth', 'yubiauth_check_crt', '');
-			$https = OCP\Config::getAppValue('user_yubiauth', 'yubiauth_https', '');
-			$cid = OCP\Config::getAppValue('user_yubiauth', 'yubiauth_client_id', '');
-			$hmac = OCP\Config::getAppValue('user_yubiauth', 'yubiauth_client_hmac', '');
-		}
-		else {
-			$urls = OCP\Config::getUserValue($user, 'user_yubiauth', 'yubiauth_urls', '');
-			$check_crt = OCP\Config::getUserValue($user, 'user_yubiauth', 'yubiauth_check_crt', '');
-			$https = OCP\Config::getUserValue($user, 'user_yubiauth', 'yubiauth_https', '');
-			$cid = OCP\Config::getUserValue($user, 'user_yubiauth', 'yubiauth_client_id', '');
-			$hmac = OCP\Config::getUserValue($user, 'user_yubiauth', 'yubiauth_client_hmac', '');
-		}
-
-		if ($check_crt === "true") {
-			$check_crt = 1;
-		}
-		else {
-			$check_crt = 0;
-		}
-		if ($https === "true") {
-			$https = 1;
-		}
-		else {
-			$https = 0;
-		}
-		if ($cid === "") {
-			$cid = OC_USER_BACKEND_YUBIAUTH_DEFAULT_CLIENT_ID;
-		}
-		if ($hmac === "") {
-			$hmac = null;
-		}
-
-		$yauth = new Auth_Yubico($cid, $hmac, $https, $check_crt);
-
-		if ($urls !== "") {
-			$url_array = explode(",", $urls);
-			foreach ($url_array as $u) {
-				$yauth->addURLpart($u);
-			}
-		}
-
-		$verify_otp = $yauth->verify($otp, null, false, OC_USER_BACKEND_YUBIAUTH_DEFAULT_SYNC_LEVEL, OC_USER_BACKEND_YUBIAUTH_DEFAULT_TIMEOUT);
-
-		// Check for a valid otp
-		if (PEAR::isError($verify_otp)) {
-			return false;
-		}
-
-		return true;
-	}
 
 	// Authenticate with password and Yubikey OTP
 	public function checkPassword($uid, $password) {
@@ -114,20 +35,22 @@ class OC_USER_YUBIAUTH extends OC_User_Backend {
 
 		$otp = substr($password, -44, 44);
 		$pw = substr($password, 0, -44);
+        $error = "";
 
 		if (strlen($otp) !== 44) {
 			return false;
 		}
 
-		if (self::findYubiauthUser($uid, $otp) === false) {
+		if (Yubiauth::findUser($uid, $otp) === false) {
 			return false;
 		}
 
-		if (self::verifyYubikeyOTP($uid, $otp) === false) {
+		if (Yubiauth::verifyYubikeyOTP($uid, $otp, $error) === false) {
+			OCP\Util::writeLog(OC_USER_BACKEND_YUBIAUTH_NAME, 'OTP VALIDATION ERROR: uid "'.$uid.'", msg "'.$error.'"', OCP\Util::ERROR);
 			return false;
 		}
 
-		if (self::checkYubiauthPassword($uid, $pw) === false) {
+		if (Yubiauth::checkPassword($uid, $pw) === false) {
 			return false;
 		}
 

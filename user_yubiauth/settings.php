@@ -21,8 +21,7 @@
 *
 */
 
-require_once 'phpass/PasswordHash.php';
-require_once 'php-yubico/Yubico.php';
+require_once('auth.php');
 
 $params = array('yubiauth_enabled',
 			'yubiauth_id',
@@ -81,68 +80,19 @@ if ($_POST) {
 	}
 	// Enable/Save password
 	if ($pw_enabled === "true" && $pw !== "") {
-		$hasher = new PasswordHash(8, CRYPT_BLOWFISH!=1);
-		$hash = $hasher->HashPassword($pw.OCP\Config::getSystemValue('passwordsalt', ''));
-		OCP\Config::setUserValue($user, 'user_yubiauth', 'yubiauth_pw', $hash);
-		OCP\Config::setUserValue($user, 'user_yubiauth', 'yubiauth_pw_enabled', 'true');
+		Yubiauth::savePassword($user, $pw);
 	}
 	// Disable/Clear password
 	elseif ($pw_enabled === "false") {
-		OCP\Config::setUserValue($user, 'user_yubiauth', 'yubiauth_pw', '');
-		OCP\Config::setUserValue($user, 'user_yubiauth', 'yubiauth_pw_enabled', 'false');
+		Yubiauth::removePassword($user);
 	}
 	// Enable Yubiauth and change the Yubikey ID after OTP test
 	if (strlen($id) === 12 && $id !== OCP\Config::getUserValue($user, 'user_yubiauth', 'yubiauth_id')) {
-		// Global or personal validation server settings?
-		if (OCP\Config::getAppValue('user_yubiauth', 'yubiauth_admin_enabled', 'false') === "true") {
-			$urls = OCP\Config::getAppValue('user_yubiauth', 'yubiauth_urls', '');
-			$check_crt = OCP\Config::getAppValue('user_yubiauth', 'yubiauth_check_crt', '');
-			$https = OCP\Config::getAppValue('user_yubiauth', 'yubiauth_https', '');
-			$cid = OCP\Config::getAppValue('user_yubiauth', 'yubiauth_client_id', '');
-			$hmac = OCP\Config::getAppValue('user_yubiauth', 'yubiauth_client_hmac', '');
-		}
-		else {
-			$urls = OCP\Config::getUserValue($user, 'user_yubiauth', 'yubiauth_urls', '');
-			$check_crt = OCP\Config::getUserValue($user, 'user_yubiauth', 'yubiauth_check_crt', '');
-			$https = OCP\Config::getUserValue($user, 'user_yubiauth', 'yubiauth_https', '');
-			$cid = OCP\Config::getUserValue($user, 'user_yubiauth', 'yubiauth_client_id', '');
-			$hmac = OCP\Config::getUserValue($user, 'user_yubiauth', 'yubiauth_client_hmac', '');
-		}
-
-		if ($check_crt === "true") {
-			$check_crt = 1;
-		}
-		else {
-			$check_crt = 0;
-		}
-		if ($https === "true") {
-			$https = 1;
-		}
-		else {
-			$https = 0;
-		}
-		if ($cid === "") {
-			$cid = OC_USER_BACKEND_YUBIAUTH_DEFAULT_CLIENT_ID;
-		}
-		if ($hmac === "") {
-			$hmac = null;
-		}
-
-		$yauth = new Auth_Yubico($cid, $hmac, $https, $check_crt);
-		
-		if ($urls !== "") {
-			$url_array = explode(",", $urls);
-			foreach ($url_array as $u) {
-				$yauth->addURLpart($u);
-			}
-		}
-
-		$verify_otp = $yauth->verify($otp, null, false, OC_USER_BACKEND_YUBIAUTH_DEFAULT_SYNC_LEVEL, OC_USER_BACKEND_YUBIAUTH_DEFAULT_TIMEOUT);
-
-		if (PEAR::isError($verify_otp)) {
+		$error = "";
+		if (Yubiauth::verifyYubikeyOTP($user, $otp, $error) === false) {
 			OCP\Config::setUserValue($user, 'user_yubiauth', 'yubiauth_enabled', 'false');
 			OCP\Config::setUserValue($user, 'user_yubiauth', 'yubiauth_id', 'FAIL: Check settings');
-			$error_msg = "Error: ".$verify_otp->getMessage();
+			$error_msg = "Error: ".$error;
 		}
 		else {
 			OCP\Config::setUserValue($user, 'user_yubiauth', 'yubiauth_id', $id);

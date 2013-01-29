@@ -42,11 +42,11 @@ Adds Yubico Yubikey authentication support to Owncloud
     * ``v0.0.7``
         * security update: csrf protection
         * security update: ask for Owncloud account password in order to change
-            personal settings, if Yubikey authentication is enabled
+          personal settings, if Yubikey authentication is enabled
         * ajaxified/"live" settings
         * log otp validation errors
         * use php-yubico inside the "user_yubiauth/3rdparty" folder instead of
-            "owncloud/3rdparty" folder
+          "owncloud/3rdparty" folder
         * php-yubico example files removed
         * bugfixes
     * ``v0.0.4``

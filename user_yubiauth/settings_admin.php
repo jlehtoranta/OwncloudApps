@@ -21,51 +21,20 @@
 *
 */
 
+OCP\User::checkLoggedIn();
 OCP\User::checkAdminUser();
 
-$params = array('yubiauth_admin_enabled',
-			'yubiauth_urls',
-			'yubiauth_https',
-			'yubiauth_check_crt',
-			'yubiauth_client_id',
-			'yubiauth_client_hmac'
-);
-
-// Save settings
-if ($_POST) {
-	$pw_enabled = "false";
-	// Parse parameters
-	foreach ($params as $param) {
-		if (isset($_POST[$param])) {
-			if ($param === "yubiauth_admin_enabled") {
-				if (OCP\Config::getAppValue('user_yubiauth', $param, 'false') === "false") {
-					OCP\Config::setAppValue('user_yubiauth', $param, 'true');
-					break;
-				}
-				else {
-					OCP\Config::setAppValue('user_yubiauth', $param, 'true');
-				}
-			}
-			else {
-				OCP\Config::setAppValue('user_yubiauth', $param, $_POST[$param]);
-			}
-		}
-		elseif ($param === "yubiauth_admin_enabled") {
-			OCP\Config::setAppValue('user_yubiauth', $param, 'false');
-		}
-		elseif ($param === "yubiauth_https") {
-			OCP\Config::setAppValue('user_yubiauth', $param, 'false');
-		}
-		elseif ($param === "yubiauth_check_crt") {
-			OCP\Config::setAppValue('user_yubiauth', $param, 'false');
-		}
-	}
-}
-
+OCP\Util::addScript('user_yubiauth', 'settings_admin');
 
 // Fill settings template
 $tmpl = new OCP\Template('user_yubiauth', 'settings_admin');
 $tmpl->assign('yubiauth_admin_enabled', OCP\Config::getAppValue('user_yubiauth', 'yubiauth_admin_enabled', 'false'));
+if (OCP\Config::getAppValue('user_yubiauth', 'yubiauth_admin_enabled', 'false') !== "true") {
+	$tmpl->assign('yubiauth_server_settings', 'style=display:none');
+}
+else {
+	$tmpl->assign('yubiauth_server_settings', '');
+}
 $tmpl->assign('yubiauth_urls', OCP\Config::getAppValue('user_yubiauth', 'yubiauth_urls', ''));
 $tmpl->assign('yubiauth_https', OCP\Config::getAppValue('user_yubiauth', 'yubiauth_https', 'true'));
 $tmpl->assign('yubiauth_check_crt', OCP\Config::getAppValue('user_yubiauth', 'yubiauth_check_crt', 'true'));

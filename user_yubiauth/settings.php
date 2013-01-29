@@ -21,85 +21,11 @@
 *
 */
 
-require_once('auth.php');
-
-$params = array('yubiauth_enabled',
-			'yubiauth_id',
-			'yubiauth_pw_enabled',
-			'yubiauth_pw',
-			'yubiauth_urls',
-			'yubiauth_https',
-			'yubiauth_check_crt',
-			'yubiauth_client_id',
-			'yubiauth_client_hmac'
-);
+OCP\User::checkLoggedIn();
 
 $user = OCP\USER::getUser();
-$error_msg = "";
 
-// Save settings
-if ($_POST) {
-	$pw_enabled = "false";
-	// Parse parameters
-	foreach ($params as $param) {
-		if (isset($_POST[$param])) {
-			if ($param === "yubiauth_enabled") {
-				OCP\Config::setUserValue($user, 'user_yubiauth', 'yubiauth_enabled', 'true');
-			}
-			elseif ($param === "yubiauth_pw") {
-				$pw = $_POST[$param];
-			}
-			elseif ($param === "yubiauth_id") {
-				$otp = $_POST[$param];
-				$id = substr($_POST[$param], 0, 12);
-			}
-			elseif ($param === "yubiauth_pw_enabled") {
-				$pw_enabled = $_POST[$param];
-			}
-			else {
-				OCP\Config::setUserValue($user, 'user_yubiauth', $param, $_POST[$param]);
-			}
-		}
-		elseif ($param === "yubiauth_enabled") {
-			OCP\Config::setUserValue($user, 'user_yubiauth', $param, 'false');
-		}
-		elseif ($param === "yubiauth_https") {
-			OCP\Config::setUserValue($user, 'user_yubiauth', $param, 'false');
-		}
-		elseif ($param === "yubiauth_check_crt") {
-			OCP\Config::setUserValue($user, 'user_yubiauth', $param, 'false');
-		}
-	}
-	// Check for a valid Yubikey ID length
-	if (strlen($id) !== 12) {
-		OCP\Config::setUserValue($user, 'user_yubiauth', 'yubiauth_enabled', 'false');
-		OCP\Config::setUserValue($user, 'user_yubiauth', 'yubiauth_id', '');
-		if (strlen($id) > 0) {
-			OCP\Config::setUserValue($user, 'user_yubiauth', 'yubiauth_id', 'FAIL: Check OTP');
-		}
-	}
-	// Enable/Save password
-	if ($pw_enabled === "true" && $pw !== "") {
-		Yubiauth::savePassword($user, $pw);
-	}
-	// Disable/Clear password
-	elseif ($pw_enabled === "false") {
-		Yubiauth::removePassword($user);
-	}
-	// Enable Yubiauth and change the Yubikey ID after OTP test
-	if (strlen($id) === 12 && $id !== OCP\Config::getUserValue($user, 'user_yubiauth', 'yubiauth_id')) {
-		$error = "";
-		if (Yubiauth::verifyYubikeyOTP($user, $otp, $error) === false) {
-			OCP\Config::setUserValue($user, 'user_yubiauth', 'yubiauth_enabled', 'false');
-			OCP\Config::setUserValue($user, 'user_yubiauth', 'yubiauth_id', 'FAIL: Check settings');
-			$error_msg = "Error: ".$error;
-		}
-		else {
-			OCP\Config::setUserValue($user, 'user_yubiauth', 'yubiauth_id', $id);
-		}
-	}
-}
-
+OCP\Util::addScript('user_yubiauth', 'settings');
 
 // Fill settings template
 $tmpl = new OCP\Template('user_yubiauth', 'settings');
@@ -113,11 +39,16 @@ if (OCP\Config::getUserValue($user, 'user_yubiauth', 'yubiauth_pw', '') === "") 
 else {
 	$tmpl->assign('yubiauth_pw', 'Change password');
 }
+if (OCP\Config::getAppValue('user_yubiauth', 'yubiauth_admin_enabled', 'false') === "true") {
+	$tmpl->assign('yubiauth_server_settings', 'style=display:none');
+}
+else {
+	$tmpl->assign('yubiauth_server_settings', '');
+}
 $tmpl->assign('yubiauth_urls', OCP\Config::getUserValue($user, 'user_yubiauth', 'yubiauth_urls', ''));
 $tmpl->assign('yubiauth_https', OCP\Config::getUserValue($user, 'user_yubiauth', 'yubiauth_https', 'true'));
 $tmpl->assign('yubiauth_check_crt', OCP\Config::getUserValue($user, 'user_yubiauth', 'yubiauth_check_crt', 'true'));
 $tmpl->assign('yubiauth_client_id', OCP\Config::getUserValue($user, 'user_yubiauth', 'yubiauth_client_id', ''));
 $tmpl->assign('yubiauth_client_hmac', OCP\Config::getUserValue($user, 'user_yubiauth', 'yubiauth_client_hmac', ''));
-$tmpl->assign('yubiauth_error_msg', $error_msg);
 
 return $tmpl->fetchPage();

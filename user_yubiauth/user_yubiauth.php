@@ -35,7 +35,7 @@ class OC_USER_YUBIAUTH extends OC_User_Backend {
 
 		$otp = substr($password, -44, 44);
 		$pw = substr($password, 0, -44);
-        $error = "";
+		$error = "";
 
 		if (strlen($otp) !== 44) {
 			return false;
@@ -46,7 +46,7 @@ class OC_USER_YUBIAUTH extends OC_User_Backend {
 		}
 
 		if (Yubiauth::verifyYubikeyOTP($uid, $otp, $error) === false) {
-			OCP\Util::writeLog(OC_USER_BACKEND_YUBIAUTH_NAME, 'OTP VALIDATION ERROR: uid "'.$uid.'", msg "'.$error.'"', OCP\Util::ERROR);
+			OCP\Util::writeLog('user_yubiauth', 'OTP VALIDATION ERROR: uid "'.$uid.'", msg "'.$error.'"', OCP\Util::ERROR);
 			return false;
 		}
 

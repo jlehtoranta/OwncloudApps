@@ -32,7 +32,6 @@ OCP\App::registerAdmin('user_yubiauth', 'settings_admin');
 OCP\App::registerPersonal('user_yubiauth','settings');
 
 // Set the defaults
-define('OC_USER_BACKEND_YUBIAUTH_NAME', 'user_yubiauth');
 define('OC_USER_BACKEND_YUBIAUTH_DEFAULT_CLIENT_ID', 1);
 define('OC_USER_BACKEND_YUBIAUTH_DEFAULT_TIMEOUT', 5);
 define('OC_USER_BACKEND_YUBIAUTH_DEFAULT_SYNC_LEVEL', 'secure');

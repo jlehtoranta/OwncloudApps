@@ -20,7 +20,7 @@
 */
 
 $(document).ready(function(){
-	$('#yubiauth_submit').click(function(){
+	$('#yubiauth').live('submit', function(){
 		$('#yubiauth_submit').val('Saving...');
 		var post = $('#yubiauth').serialize();
 		$.post(OC.filePath('user_yubiauth', 'ajax', 'change_admin_settings.php'), post, function(data){
@@ -36,8 +36,8 @@ $(document).ready(function(){
 			else{
 				$('#yubiauth_server_settings').hide();
 			}
+			setTimeout(function(){$('#yubiauth_submit').val('Save')},1000);
 		});
-		setTimeout(function(){$('#yubiauth_submit').val('Save')},1000);
 		return false;
 	});
 });

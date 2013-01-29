@@ -22,7 +22,7 @@
 */
 
 require_once 'phpass/PasswordHash.php';
-require_once 'php-yubico/Yubico.php';
+require_once 'user_yubiauth/3rdparty/php-yubico/Yubico.php';
 
 // Yubiauth authentication methods
 class Yubiauth {
@@ -57,7 +57,7 @@ class Yubiauth {
 		}
 		$hasher = new PasswordHash(8, CRYPT_BLOWFISH!=1);
 		$db_hash = OCP\Config::getUserValue($user, 'user_yubiauth', 'yubiauth_pw', '');
-		if ($hasher->CheckPassword($pw.OCP\Config::getSystemValue('passwordsalt', ''), $db_hash)) {
+		if ($hasher->CheckPassword($pw.OCP\Config::getSystemValue('passwordsalt', ''), $db_hash) === true) {
 			return true;
 		}
 		return false;

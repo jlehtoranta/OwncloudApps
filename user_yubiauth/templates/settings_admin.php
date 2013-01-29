@@ -20,11 +20,11 @@
 		</p>
 		<p>
 		<label for="yubiauth_client_id"><?php echo $l->t('Client ID'); ?></label>
-		<input type="text" id="yubiauth_client_id" name="yubiauth_client_id" value="<?php echo $_['yubiauth_client_id']; ?>" placeholder="<?php echo $l->t('Client ID'); ?>" />
+		<input type="text" id="yubiauth_client_id" name="yubiauth_client_id" value="<?php echo $_['yubiauth_client_id']; ?>" placeholder="<?php echo $l->t('Client ID'); ?>" style="width:50px"/>
 		</p>
 		<p>
 		<label for="yubiauth_client_hmac"><?php echo $l->t('Secret key'); ?></label>
-		<input type="text" id="yubiauth_client_hmac" name="yubiauth_client_hmac" value="<?php echo $_['yubiauth_client_hmac']; ?>" placeholder="<?php echo $l->t('Client HMAC'); ?>" style="width:300px" />
+		<input type="text" id="yubiauth_client_hmac" name="yubiauth_client_hmac" value="<?php echo $_['yubiauth_client_hmac']; ?>" placeholder="<?php echo $l->t('Client HMAC'); ?>" style="width:250px" />
 		</p>
 		<p>
 		If you want to authenticate against Yubico servers, get your API key from: <a href="https://upgrade.yubico.com/getapikey/">https://upgrade.yubico.com/getapikey/</a>.

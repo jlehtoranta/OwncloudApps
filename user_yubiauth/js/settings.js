@@ -21,23 +21,37 @@
 
 $(document).ready(function(){
 	$('#yubiauth_submit').click(function(){
-		$('#yubiauth_submit').val('Saving...');
 		var post = $('#yubiauth').serialize();
 		$('#yubiauth_id_error')
 			.html('')
 			.hide();
 		$.post(OC.filePath('user_yubiauth', 'ajax', 'change_settings.php'), post, function(data){
-			$('#yubiauth_enabled').prop('checked', (data.data.yubiauth_enabled == 'true'));
+			$('#yubiauth_oc_account_pw').val('');
+			if (data.status == "error"){
+				$('#yubiauth_submit').val('Error');
+				$('#yubiauth_oc_account_pw').attr('placeholder', 'Wrong password');
+			}
+			else{
+				$('#yubiauth_submit').val('Saving...');
+			}
+			if (data.data.yubiauth_enabled == 'true'){
+				$('#yubiauth_enabled').prop('checked', true);
+				$('#yubiauth_oc_account_pw_toggle').show();
+			}
+			else{
+				$('#yubiauth_enabled').prop('checked', false);
+				$('#yubiauth_oc_account_pw_toggle').hide();
+			}
 			$('#yubiauth_id').val(data.data.yubiauth_id);
 			$('#yubiauth_pw_enabled').prop('checked', (data.data.yubiauth_pw_enabled == 'true'));
 			$('#yubiauth_pw').val('');
-			if (data.data.yubiauth_pw == 'changed') {
-				$('#yubiauth_pw').attr('placeholder', 'Password changed');
-				setTimeout(function(){$('#yubiauth_pw').attr('placeholder', 'Change password')},1000);
+			if (data.data.yubiauth_pw == 'changed'){
+				$('#yubiauth_pw').attr('placeholder', 'YubiPassword changed');
+				setTimeout(function(){$('#yubiauth_pw').attr('placeholder', 'Change YubiPassword')},1000);
 			}
-			else if (data.data.yubiauth_pw == 'cleared') {
-				$('#yubiauth_pw').attr('placeholder', 'Password cleared');
-				setTimeout(function(){$('#yubiauth_pw').attr('placeholder', 'New password')},1000);
+			else if (data.data.yubiauth_pw == 'cleared'){
+				$('#yubiauth_pw').attr('placeholder', 'YubiPassword cleared');
+				setTimeout(function(){$('#yubiauth_pw').attr('placeholder', 'New YubiPassword')},1000);
 			}
 			if(data.data.yubiauth_admin_enabled != 'true'){
 				$('#yubiauth_urls').val(data.data.yubiauth_urls);
@@ -56,7 +70,10 @@ $(document).ready(function(){
 					.show();
 			}
 		});
-		setTimeout(function(){$('#yubiauth_submit').val('Save')},1000);
+		setTimeout(function(){
+			$('#yubiauth_oc_account_pw').attr('placeholder', 'Current password');
+			$('#yubiauth_submit').val('Save');
+		},1000);
 		return false;
 	});
 });

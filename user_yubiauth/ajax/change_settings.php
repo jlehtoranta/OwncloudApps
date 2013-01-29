@@ -42,6 +42,32 @@ $user = OCP\USER::getUser();
 $error_msg = "";
 $pw_msg = "";
 
+// Check owncloud user account password, if yubiauth_enabled is true
+if (OCP\Config::getUserValue($user, 'user_yubiauth', 'yubiauth_enabled', 'false') === "true") {
+	$error = true;
+	if (isset($_POST['yubiauth_oc_account_pw'])) {
+		if (OCP\User::checkPassword($user, $_POST['yubiauth_oc_account_pw']) === $user) {
+			$error = false;
+		}
+	}
+	// Return error and unchanged values
+	if ($error === true) {
+		OCP\JSON::error(array("data" => array("yubiauth_id_error" => $error_msg,
+			"yubiauth_pw" => $pw_msg,
+			"yubiauth_admin_enabled" => OCP\Config::getAppValue('user_yubiauth', 'yubiauth_admin_enabled', 'false'),
+			"yubiauth_enabled" => OCP\Config::getUserValue($user, 'user_yubiauth', 'yubiauth_enabled', 'false'),
+			"yubiauth_id" => OCP\Config::getUserValue($user, 'user_yubiauth', 'yubiauth_id', ''),
+			"yubiauth_pw_enabled" => OCP\Config::getUserValue($user, 'user_yubiauth', 'yubiauth_pw_enabled', ''),
+			"yubiauth_urls" => OCP\Config::getUserValue($user, 'user_yubiauth', 'yubiauth_urls', ''),
+			"yubiauth_https" => OCP\Config::getUserValue($user, 'user_yubiauth', 'yubiauth_https', 'true'),
+			"yubiauth_check_crt" => OCP\Config::getUserValue($user, 'user_yubiauth', 'yubiauth_check_crt', 'true'),
+			"yubiauth_client_id" => OCP\Config::getUserValue($user, 'user_yubiauth', 'yubiauth_client_id', ''),
+			"yubiauth_client_hmac" => OCP\Config::getUserValue($user, 'user_yubiauth', 'yubiauth_client_hmac', ''),
+		)));
+		exit;
+	}
+}
+
 // Save settings
 if ($_POST) {
 	$pw_enabled = "false";

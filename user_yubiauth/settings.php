@@ -34,10 +34,10 @@ $tmpl->assign('yubiauth_enabled', OCP\Config::getUserValue($user, 'user_yubiauth
 $tmpl->assign('yubiauth_id', OCP\Config::getUserValue($user, 'user_yubiauth', 'yubiauth_id', ''));
 $tmpl->assign('yubiauth_pw_enabled', OCP\Config::getUserValue($user, 'user_yubiauth', 'yubiauth_pw_enabled', ''));
 if (OCP\Config::getUserValue($user, 'user_yubiauth', 'yubiauth_pw', '') === "") {
-	$tmpl->assign('yubiauth_pw', 'New password');
+	$tmpl->assign('yubiauth_pw', 'New YubiPassword');
 }
 else {
-	$tmpl->assign('yubiauth_pw', 'Change password');
+	$tmpl->assign('yubiauth_pw', 'Change YubiPassword');
 }
 if (OCP\Config::getAppValue('user_yubiauth', 'yubiauth_admin_enabled', 'false') === "true") {
 	$tmpl->assign('yubiauth_server_settings', 'style=display:none');
@@ -50,5 +50,11 @@ $tmpl->assign('yubiauth_https', OCP\Config::getUserValue($user, 'user_yubiauth',
 $tmpl->assign('yubiauth_check_crt', OCP\Config::getUserValue($user, 'user_yubiauth', 'yubiauth_check_crt', 'true'));
 $tmpl->assign('yubiauth_client_id', OCP\Config::getUserValue($user, 'user_yubiauth', 'yubiauth_client_id', ''));
 $tmpl->assign('yubiauth_client_hmac', OCP\Config::getUserValue($user, 'user_yubiauth', 'yubiauth_client_hmac', ''));
+if (OCP\Config::getUserValue($user, 'user_yubiauth', 'yubiauth_enabled', 'false') === "true") {
+	$tmpl->assign('yubiauth_oc_account_pw_toggle', '');
+}
+else {
+	$tmpl->assign('yubiauth_oc_account_pw_toggle', 'style=display:none');
+}
 
 return $tmpl->fetchPage();

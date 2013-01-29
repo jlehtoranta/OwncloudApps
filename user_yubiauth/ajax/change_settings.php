@@ -108,7 +108,7 @@ if ($_POST) {
 }
 
 // Return values
-OC_JSON::success(array("data" => array("yubiauth_id_error" => $error_msg,
+OCP\JSON::success(array("data" => array("yubiauth_id_error" => $error_msg,
 	"yubiauth_pw" => $pw_msg,
 	"yubiauth_admin_enabled" => OCP\Config::getAppValue('user_yubiauth', 'yubiauth_admin_enabled', 'false'),
 	"yubiauth_enabled" => OCP\Config::getUserValue($user, 'user_yubiauth', 'yubiauth_enabled', 'false'),

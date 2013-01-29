@@ -65,7 +65,7 @@ if ($_POST) {
 }
 
 // Return values
-OC_JSON::success(array("data" => array("yubiauth_admin_enabled" => OCP\Config::getAppValue('user_yubiauth', 'yubiauth_admin_enabled', 'false'),
+OCP\JSON::success(array("data" => array("yubiauth_admin_enabled" => OCP\Config::getAppValue('user_yubiauth', 'yubiauth_admin_enabled', 'false'),
 	"yubiauth_urls" => OCP\Config::getAppValue('user_yubiauth', 'yubiauth_urls', ''),
 	"yubiauth_https" => OCP\Config::getAppValue('user_yubiauth', 'yubiauth_https', 'true'),
 	"yubiauth_check_crt" => OCP\Config::getAppValue('user_yubiauth', 'yubiauth_check_crt', 'true'),

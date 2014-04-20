@@ -24,7 +24,7 @@ Yubiauth user backend
 ---------------------
 Adds Yubico Yubikey authentication support to Owncloud 
 
-* Typical Usage (Tested on ownCloud 6.0) 
+* Typical Usage (Tested on OwnCloud 6.0)
     * Extract files in to ``apps`` folder
     * Under ``Admin`` within the ownCloud weba front-end
         * Select ``Use global validation server settings``

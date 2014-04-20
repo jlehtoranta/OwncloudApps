@@ -22,7 +22,21 @@ Releases
 
 Yubiauth user backend
 ---------------------
-Adds Yubico Yubikey authentication support to Owncloud
+Adds Yubico Yubikey authentication support to Owncloud 
+
+* Typical Usage (Tested on OwnCloud 6.0)
+    * Extract files in to ``apps`` folder
+    * Under ``Admin`` within the ownCloud weba front-end
+        * Select ``Use global validation server settings``
+        * Enter your ``Client ID`` and ``Secret Key``` obtained from getapi upgrade.yubico.com/getapikey/
+        * Press ``Save``
+    * Users then enabled it on their log under ``Personal``
+        * Select ``Enable Yubikey authentication``
+        * Click in the ``Yubikey ID`` box and enter your key OTP
+        * [Optional] Select ``Use password with OTP``
+        * [Optional] Enter a password/pin in the ``YubiPassword``
+        * Enter your current password in ``Courrent password``
+        * Press ``Save``
 
 * Requirements:
     * ``OwnCloud 4.5+``

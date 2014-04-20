@@ -12,10 +12,10 @@
 		</p>
 		<p>
 		<input type="checkbox" id="yubiauth_pw_enabled" name="yubiauth_pw_enabled" value="true" <?php if ($_['yubiauth_pw_enabled'] === "true") { echo "checked"; }?> />
-		<label for="yubiauth_pw"><?php echo $l->t('Use password with OTP');?></label>
+		<label for="yubiauth_pw"><?php echo $l->t('Use password/pin prefix with OTP');?></label>
 		</p>
 		<p>
-		<label for="yubiauth_pw"><?php echo $l->t('YubiPassword');?></label>
+		<label for="yubiauth_pw"><?php echo $l->t('Password/Pin prefix');?></label>
 		<input type="password" id="yubiauth_pw" name="yubiauth_pw" value="" placeholder="<?php echo $_['yubiauth_pw']; ?>" style="width:150px"/>
 		</p>
 		<div id="yubiauth_server_settings" <?php echo $_['yubiauth_server_settings']; ?>>

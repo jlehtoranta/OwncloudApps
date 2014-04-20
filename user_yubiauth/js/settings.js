@@ -44,12 +44,12 @@ $(document).ready(function(){
 			$('#yubiauth_id').val(data.data.yubiauth_id);
 			$('#yubiauth_pw_enabled').prop('checked', (data.data.yubiauth_pw_enabled == 'true'));
 			if (data.data.yubiauth_pw == 'changed'){
-				$('#yubiauth_pw').attr('placeholder', 'YubiPassword changed');
-				setTimeout(function(){$('#yubiauth_pw').attr('placeholder', 'Change YubiPassword')},1000);
+				$('#yubiauth_pw').attr('placeholder', 'Password/pin changed');
+				setTimeout(function(){$('#yubiauth_pw').attr('placeholder', 'Change password/pin prefix')},1000);
 			}
 			else if (data.data.yubiauth_pw == 'cleared'){
-				$('#yubiauth_pw').attr('placeholder', 'YubiPassword cleared');
-				setTimeout(function(){$('#yubiauth_pw').attr('placeholder', 'New YubiPassword')},1000);
+				$('#yubiauth_pw').attr('placeholder', 'Password/pin cleared');
+				setTimeout(function(){$('#yubiauth_pw').attr('placeholder', 'New password/pin prefix')},1000);
 			}
 			if(data.data.yubiauth_admin_enabled != 'true'){
 				$('#yubiauth_urls').val(data.data.yubiauth_urls);

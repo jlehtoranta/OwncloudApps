@@ -62,7 +62,7 @@ $(document).ready(function(){
 			else{
 				$('#yubiauth_server_settings').hide();
 			}
-			if(data.data.yubiauth_id_error != ""){
+			if(data.data.yubiauth_id_error !== ""){
 				$('#yubiauth_id_error')
 					.html(data.data.yubiauth_id_error)
 					.show();
